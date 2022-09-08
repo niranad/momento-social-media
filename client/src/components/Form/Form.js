@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import FileBase from 'react-file-base64';
 import { TextField, Typography, Button, Paper } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,19 @@ const Form = ({ currentId, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const post = useSelector(({ posts }) =>
-    currentId ? posts.find((post) => post._id === currentId) : null,
+    currentId ? posts.find((post) => post._id === currentId) : {},
+  );
+  const { creator, title, message, tags, selectedFile } = post;
+
+  const postMemo = useMemo(
+    () => ({
+      creator,
+      title,
+      message,
+      tags,
+      selectedFile,
+    }),
+    [creator, title, message, tags, selectedFile],
   );
 
   const [postData, setPostData] = useState({
@@ -22,8 +34,8 @@ const Form = ({ currentId, setCurrentId }) => {
   });
 
   useEffect(() => {
-    if (post) setPostData(post);
-  }, [post]);
+    if (postMemo) setPostData(postMemo);
+  }, [postMemo]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,7 +68,9 @@ const Form = ({ currentId, setCurrentId }) => {
         noValidate
         onSubmit={handleSubmit}
       >
-        <Typography variant='h6'>{currentId ? 'Edit' : 'Create'} a Memory</Typography>
+        <Typography variant='h6'>
+          {currentId ? 'Edit' : 'Create'} a Memory
+        </Typography>
 
         <TextField
           name='creator'
@@ -92,7 +106,7 @@ const Form = ({ currentId, setCurrentId }) => {
           label='Tags'
           fullWidth
           value={postData.tags}
-          onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
+          onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(/[,]\s+?/) })}
         />
 
         <div className={classes.fileInput}>
@@ -116,7 +130,7 @@ const Form = ({ currentId, setCurrentId }) => {
           Submit
         </Button>
         <Button
-          className={classes.buttonSubmit}
+          className={classes.clear}
           variant='contained'
           color='secondary'
           size='large'

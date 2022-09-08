@@ -14,20 +14,20 @@ function App() {
 
   useEffect(() => {
     dispatch(getPosts());
-  }, [])
-  
+  }, [currentId, dispatch]);
 
   return (
     <Container maxwidth='lg'>
       <AppBar className={classes.appBar} position='static' color='inherit'>
         <Typography className={classes.heading} variant='h2' align='center'>
-          Memories
+          Memories&nbsp;
         </Typography>
         <img src={memories} alt='memories' height='60' />
       </AppBar>
       <Grow in>
         <Container>
           <Grid
+            className={classes.mainContainer}
             container
             justifyContent='space-between'
             alignItems='stretch'
@@ -48,5 +48,4 @@ function App() {
 }
 
 export default App;
-
 
