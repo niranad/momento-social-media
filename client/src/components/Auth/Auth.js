@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import dotenv from 'dotenv';
 import {
   Avatar,
   Button,
@@ -12,6 +13,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Icon from './Icon';
 import useStyles from './styles';
 import Input from './Input';
+
+dotenv.config();
 
 const Auth = () => {
   const classes = useStyles();
@@ -97,7 +100,7 @@ const Auth = () => {
           </Button>
 
           <GoogleLogin
-            clientId=''
+            clientId={process.env.GOOGLE_CLIENT_ID}
             render={(renderProps) => (
               <Button
                 className={classes.googleButton}
