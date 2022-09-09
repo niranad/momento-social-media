@@ -106,7 +106,7 @@ const Form = ({ currentId, setCurrentId }) => {
           label='Tags'
           fullWidth
           value={postData.tags}
-          onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(/[,]\s+?/) })}
+          onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(/[^a-z0-9]+/i).filter((val) => val !== '') })}
         />
 
         <div className={classes.fileInput}>
