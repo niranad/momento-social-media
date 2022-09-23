@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <title>Email Confirmation</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        width: 100vw;
+        height: 100vh;
+        background-color: #f8f7fc;
+      }
+      .content-div {
+        height: fit-content;
+        margin-top: 50px;
+        padding: 20px;
+        background-color: rgb(36, 248, 107);
+        border-radius: 7px;
+      }
+      .signin-link {
+        text-decoration: none;
+        border: none;
+        color: rgb(108, 108, 177);
+      }
+      .text {
+        color: #fff;
+        font-family: Calibri, Verdana, sans-serif;
+        display: inline-block;
+      }
+      .material-icons {
+        font-size: 30px;
+        color: #f8f7fc;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-div">
+      <span class="material-icons">check_circle</span>
+      <h3 class="text"
+        >Email confirmation successful. You can now proceed to
+        <a class="signin-link" href="http://localhost:3000" target="_blank"
+          >sign in</a
+        >
+        into your account.</h3
+      >
+    </div>
+  </body>
+</html>

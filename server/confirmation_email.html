@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Confirmation</title>
+    <style>
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .link-div {
+        text-align: center;
+      }
+      input {
+        display: none;
+      }
+      .button:hover {
+        background-color: rgba(0, 170, 255, 1);
+      }
+      .button {
+        text-align: center;
+        font-size: 20px;
+        width: fit-content;
+        margin: 0 auto;
+        background-color: rgba(0, 170, 255, 0.822);
+        color: #f7f9fccb;
+        border: 1px solid rgba(0, 170, 255, 0.822);
+        border-radius: 6px;
+        padding: 10px;
+      }
+      .heading {
+        font-weight: 700;
+        color: rgba(0, 170, 255, 1);
+        text-align: center;
+        background-color: #f8f7fc;
+        padding: 20px;
+        margin-bottom: 10px;
+        border-left: 2px solid rgba(0, 170, 255, 1);
+        border-right: 2px solid rgba(0, 170, 255, 1);
+        border-top: 3px dotted #f7f8fc;
+        border-bottom: 3px dotted #f7f8fc;
+        border-radius: 5px;
+      }
+      .content {
+        background-color: #f8f7fc;
+        font-family: Calibri, Verdana;
+        font-size: 16px;
+        border: 1px solid #f7f8fc;
+        height: auto;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3 class="heading">Momento</h3>
+    <main class="content">
+      <p style="margin-bottom: 20px">Hi * and welcome</p>
+      <br />
+      <p
+        >We are excited you sign up for
+        <span style="font-weight: 700; color: rgba(0, 170, 255, 1)"
+          >Momento</span
+        >, a place to connect with people from all walks of life and share
+        vividly your notable and amazing moments, experiences and much more.</p
+      >
+      <br />
+      <p
+        >To complete your registration, please click the link below. We can't
+        wait to have you back on the platform.
+        <strong
+          >Please note that this link is valid only for 24hours since you signed
+          up</strong
+        >.</p
+      >
+    </main>
+    <br />
+    <div class="link-div">
+      <form method="post">
+        <input type="text" name="signature" value="signature" />
+        <button
+          type="submit"
+          formaction="http://localhost:5000/users/signup/emailconfirmation/newuser"
+          class="button"
+          >Confirm Email</button
+        >
+      </form>
+    </div>
+    <br />
+    <br />
+    <p>See you soon!</p>
+    <p>Thank you and best regards.</p>
+    <br />
+    <footer>Momento Team</footer>
+  </body>
+</html>

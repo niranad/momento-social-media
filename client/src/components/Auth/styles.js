@@ -1,12 +1,47 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
+  container: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      textAlign: 'center',
+    },
+  },
+  modalBox: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '60%',
+    bgcolor: '#f8f7fc',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  emailBox: {
+    textAlign: 'center',
+    paddingTop: 40,
+  },
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing(2),
+  },
+  intro: {
+    marginRight: '40px',
   },
   root: {
     '& .MuiTextField-root': {

@@ -9,6 +9,17 @@ export default makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  appBarSearch: {
+    borderRadius: 4,
+    marginBottom: '1rem',
+    display: 'flex',
+    padding: '16px',
+  },
+  pagination: {
+    borderRadius: 4,
+    marginTop: '1rem',
+    padding: '16px',
+  },
   heading: {
     color: 'rgb(0, 170, 255)',
   },
@@ -17,7 +28,12 @@ export default makeStyles((theme) => ({
   },
   [theme.breakpoints.down('sm')]: {
     mainContainer: {
-      flexDirection: 'column-reverse'
-    }
-  }
+      flexDirection: 'column-reverse',
+    },
+  },
+  [theme.breakpoints.down('xs')]: {
+    gridContainer: {
+      flexDirection: 'column-reverse',
+    },
+  },
 }));
