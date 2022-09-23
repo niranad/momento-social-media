@@ -4,7 +4,7 @@ A fully-functional social media application built with MongoDB, Express, React a
 ## Features
 - Create, Read, Update, and Delete post
 - File upload using FileBase package
-- Traditional authentication (Signin/Signup forms)
+- Traditional authentication (Sign In/Sign Up forms)
 - Email verification using Nodemailer (implemented with JWT token-based verification link)
 - Google Authentication (Sign in with Google) using react-oauth/google package
 - Pagination
