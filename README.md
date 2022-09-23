@@ -1,9 +1,16 @@
-## Memories Application
-This is a full-stack MERN application that allows users to share their notable memories or experiences such as places visited, amazing events and much more.
+## Momento Social Media
+A fully-functional social media application built with MongoDB, Express, React and Node. 
 
 ## Features
-- Material UI design
-- Create, Read, Update, and Delete (CRUD) data REST interface
-- Authentication including Google OAuth
+- Create, Read, Update, and Delete post
+- File upload using FileBase package
+- Traditional authentication (Signin/Signup forms)
+- Email verification using Nodemailer (implemented with JWT token-based verification link)
+- Google Authentication (Sign in with Google) using react-oauth/google package
 - Pagination
-- Search Filtering
+- Search filtering
+- Material UI design
+- REST API design
+
+## Link
+Coming up...
