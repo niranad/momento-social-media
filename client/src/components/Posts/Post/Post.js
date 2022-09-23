@@ -22,11 +22,11 @@ import placeholder from '../../../images/placeholder.jpg';
 export default function Post({ post, setCurrentId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('profile'));
+  const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
   const [isLengthy, setIsLengthy] = useState(false);
   const history = useHistory();
   const [likes, setLikes] = useState(post?.likes);
-  const userId = user?.result?.googleId || user?.result?._id;
+  const userId = user?.result?._id;
   const hasLikedPost = likes?.some((id) => id === userId);
 
   const openPost = () => {
@@ -43,6 +43,7 @@ export default function Post({ post, setCurrentId }) {
     dispatch(likePost(post._id));
   };
 
+  // Sub component for like functionality
   const Like = () => {
     if (likes.length > 0) {
       return likes.find((id) => id === userId) ? (
@@ -91,27 +92,31 @@ export default function Post({ post, setCurrentId }) {
           </Typography>
         </div>
         <div className={classes.overlay2}>
-          {user?.result?._id === post.googleId ||
-            (user?.result?._id === post.creator && (
-              <Button
-                style={{ color: 'white' }}
-                size='small'
-                title='Edit Post'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentId(post._id);
-                }}
-              >
-                <MoreHorizIcon fontSize='medium' />
-              </Button>
-            ))}
+          {userId === post.creator && (
+            <Button
+              style={{ color: 'white' }}
+              size='small'
+              title='Edit Post'
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentId(post._id);
+              }}
+            >
+              <MoreHorizIcon fontSize='medium' />
+            </Button>
+          )}
         </div>
         <div className={classes.details}>
           <Typography variant='body2' color='textSecondary'>
-            {post?.tags &&
-              post.tags.map(
-                (tag, i, arr) => `#${tag}${i < arr.length - 1 ? ', ' : ''}`,
-              )}
+            {post?.tags
+              ? post.tags.length > 6
+                ? `${post.tags.map((tag, i, arr) =>
+                    i < 6 ? `#${tag}${i < 5 ? ', ' : ''}` : '',
+                  )}...`
+                : post.tags.map(
+                    (tag, i, arr) => `#${tag}${i < arr.length - 1 ? ', ' : ''}`,
+                  )
+              : ''}
           </Typography>
         </div>
         <Typography className={classes.title} variant='h6' gutterBottom>
@@ -134,19 +139,17 @@ export default function Post({ post, setCurrentId }) {
         >
           <Like post={post} user={user} />
         </Button>
-        {user &&
-          (user?.result?.googleId === post.creator ||
-            user?.result._id === post.creator) && (
-            <Button
-              className={classes.cardActionsButton}
-              size='small'
-              color='primary'
-              onClick={() => dispatch(deletePost(post._id))}
-            >
-              <DeleteIcon fontSize='small' />
-              Delete
-            </Button>
-          )}
+        {userId === post.creator && (
+          <Button
+            className={classes.cardActionsButton}
+            size='small'
+            color='primary'
+            onClick={() => dispatch(deletePost(post._id))}
+          >
+            <DeleteIcon fontSize='small' />
+            Delete
+          </Button>
+        )}
       </CardActions>
     </Card>
   );

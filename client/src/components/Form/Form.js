@@ -14,7 +14,7 @@ export default function Form({ currentId, setCurrentId }) {
     currentId ? posts.postsData.find((post) => post._id === currentId) : null,
   );
   const history = useHistory();
-  const user = JSON.parse(localStorage.getItem('profile'));
+  const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
 
   const [postData, setPostData] = useState({
     title: '',
@@ -34,7 +34,10 @@ export default function Form({ currentId, setCurrentId }) {
       dispatch(
         updatePost(currentId, {
           ...postData,
-          tags: postData.tags.split(/[^a-z0-9]+/i).filter((val) => val !== ''),
+          tags: postData.tags
+            .replace(/[?}{\]\[#_/$&@)><(|!%*^+\-\.\\]/g, '')
+            .split(/[^a-z0-9]+/i)
+            .filter((val) => val !== ''),
           name: user?.result?.name,
         }),
       );
@@ -44,6 +47,7 @@ export default function Form({ currentId, setCurrentId }) {
           {
             ...postData,
             tags: postData.tags
+              .replace(/[?}{\]\[#_/$&@)><(|!%*^+\-\.\\]/g, '')
               .split(/[^a-z0-9]+/i)
               .filter((val) => val !== ''),
             name: user?.result?.name,
@@ -87,11 +91,7 @@ export default function Form({ currentId, setCurrentId }) {
       >
         <Typography variant='h6'>
           {currentId ? 'Edit' : 'Create'} a Moment{' '}
-          {currentId ? (
-            <Icon>edit</Icon>
-          ) : (
-            <Icon>panorama</Icon>
-          )}
+          {currentId ? <Icon>edit</Icon> : <Icon>panorama</Icon>}
         </Typography>
 
         <TextField

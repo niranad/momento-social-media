@@ -19,8 +19,31 @@ export default makeStyles((theme) => ({
     fontSize: '20px',
     fontFamily: 'Roboto, Calibri, sans-serif',
     [theme.breakpoints.down('sm')]: {
-      fontSize: '16px'
-    }
+      fontSize: '16px',
+    },
+  },
+  recommended: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: '10px 20px',
+    marginTop: 30,
+    height: 'auto',
+  },
+  recommendedCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    borderRadius: '15px',
+    height: 350,
+    position: 'relative',
+    cursor: 'pointer',
+  },
+  recommendedMedia: {
+    height: 0,
+    paddingBottom: '54.76%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundBlendMode: 'darken',
   },
   section: {
     borderRadius: '20px',

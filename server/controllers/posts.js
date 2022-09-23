@@ -24,7 +24,7 @@ export const getPosts = asyncWrapper(async (req, res) => {
 export const getPostsBySearch = asyncWrapper(async (req, res) => {
   let { title, tags } = req.query;
 
-  const LIMIT = title === 'postdetails@post' ? 4 : 8;
+  const LIMIT = 8;
 
   title = new RegExp(title, 'i');
 

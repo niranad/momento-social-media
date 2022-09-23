@@ -4,7 +4,7 @@ import { Typography, Button, TextField } from '@material-ui/core';
 import useStyles from './styles';
 
 const CommentSectionSkeleton = () => {
-  const user = JSON.parse(localStorage.getItem('profile'));
+  const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
   const classes = useStyles();
 
   return (

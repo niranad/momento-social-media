@@ -9,12 +9,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const {
-  MAIL_TRAP_HOST,
-  MAIL_TRAP_PASS,
-  MAIL_TRAP_PORT,
-  MAIL_TRAP_USER,
-} = process.env;
+const { MAIL_TRAP_HOST, MAIL_TRAP_PASS, MAIL_TRAP_PORT, MAIL_TRAP_USER } =
+  process.env;
 
 export const signIn = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
@@ -32,10 +28,42 @@ export const signIn = asyncWrapper(async (req, res) => {
   const token = jwt.sign(
     { email: existingUser.email, id: existingUser._id },
     'test',
-    { expiresIn: '1h' },
+    { expiresIn: '3h' },
   );
 
   res.status(200).json({ result: existingUser, token });
+});
+
+export const signInWithGoogle = asyncWrapper(async (req, res) => {
+  const { credential } = req.body;
+
+  // Decode credential
+  const decodedData = jwt.decode(credential);
+  const { email, given_name, family_name, sub, jti, picture } = decodedData;
+
+  // Check if user exists exists in db
+  let user = await User.findOne({ email });
+
+  // Create a secured passwordless account for new google OAuth user
+  if (!user) {
+    // Google Users will only be able to sign in with google OAuth
+    const securePass = `${sub}${new Date().getTime()}${jti}`;
+    const hashedPass = await bcrypt.hash(securePass, 12);
+    user = await User.create({
+      name: `${given_name} ${family_name}`,
+      email,
+      password: hashedPass,
+      isGoogleUser: true,
+    });
+  }
+
+  const token = jwt.sign(
+    { email: user.email, id: user._id },
+    'test',
+    { expiresIn: '3h' },
+  );
+
+  res.status(200).json({ result: user, token, imageUrl: picture });
 });
 
 export const signUp = asyncWrapper(async (req, res) => {

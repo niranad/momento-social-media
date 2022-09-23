@@ -3,9 +3,9 @@ import axios from 'axios';
 const API = axios.create({ baseURL: 'http://localhost:5000' });
 
 API.interceptors.request.use((req) => {
-  if (localStorage.getItem('profile')) {
+  if (localStorage.getItem('momentoProfileObj')) {
     req.headers.Authorization = `Bearer ${
-      JSON.parse(localStorage.getItem('profile')).token
+      JSON.parse(localStorage.getItem('momentoProfileObj')).token
     }`;
   }
 
@@ -31,3 +31,4 @@ export const likePost = (id) => API.patch(`/posts/${id}/likePost`);
 // user requests
 export const signIn = (formData) => API.post('/users/signin', formData);
 export const signUp = (formData) => API.post('/users/signup', formData);
+export const signInWithGoogle = (googleResponse) => API.post('/users/signin/googlesignin', googleResponse);

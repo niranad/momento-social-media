@@ -1,24 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, Typography } from '@material-ui/core';
 import EmailIcon from '@material-ui/icons/EmailOutlined';
-import  { useDispatch } from 'react-redux';
 import useStyles from './styles';
-import { SIGN_UP } from '../../constants/actiontypes';
 
 const EmailConfirmation = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const listener = () => {
-      dispatch({ type: SIGN_UP, payload: false });
-    };
-    window.addEventListener('popstate', listener)
-  
-    return () => {
-      window.removeEventListener('popstate', listener);
-    }
-  }, []);
   
   return (
     <Box className={classes.emailBox}>

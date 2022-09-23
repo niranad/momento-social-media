@@ -28,7 +28,6 @@ export default function Posts({ setCurrentId }) {
 
   return (
     <Grid
-      className={classes.container}
       container
       alignItems='stretch'
       spacing={3}

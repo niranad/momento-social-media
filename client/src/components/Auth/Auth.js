@@ -19,11 +19,10 @@ import Icon from '@material-ui/core/Icon';
 import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { GOOGLE_AUTH } from '../../constants/actiontypes';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input';
-import { signIn, signUp } from '../../actions/auth';
+import { signIn, signUp, signInWithGoogle } from '../../actions/auth';
 
 const initialState = {
   firstName: '',
@@ -44,9 +43,7 @@ export default function Auth() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openAlert, setOpenAlert] = useState(true);
-  const [openModal, setOpenModal] = useState(false);
-  const { isSignUpAuth } = useSelector(({ authProfile }) => authProfile);
-
+  
   useEffect(() => {
     localStorage.removeItem('momento_sign_up_action');
   }, []);
@@ -54,7 +51,6 @@ export default function Auth() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setOpenModal(true);
     if (!openAlert) setOpenAlert(true);
 
     if (isSignUp) {
@@ -77,12 +73,8 @@ export default function Auth() {
   };
 
   const googleSuccess = (res) => {
-    const result = res;
-    const token = res?.credential;
-
     try {
-      dispatch({ type: GOOGLE_AUTH, payload: { result, token } });
-      history.push('/');
+      dispatch(signInWithGoogle(res, history));
     } catch (error) {
       console.log(error);
     }
@@ -109,17 +101,13 @@ export default function Auth() {
       </Backdrop>
       <div className={classes.intro}>
         <Typography
-          style={{
-            fontWeight: 700,
-            letterSpacing: '-4px',
-            color: 'rgba(0, 170, 255, 1)',
-          }}
+          className={classes.logotext}
           variant='h3'
           component='subtitle1'
         >
           Momento
         </Typography>
-        <Typography gutterBottom variant='h5' component='h5'>
+        <Typography className={classes.brandpitch} gutterBottom variant='h6' component='h6'>
           Helps you connect with people and share notable moments in your life.
         </Typography>
       </div>
@@ -146,9 +134,10 @@ export default function Auth() {
                 </IconButton>
               }
             >
-              {!isSignUp
-                ? 'INVALID EMAIL OR PASSWORD'
-                : 'PASSWORDS DO NOT MATCH'}
+              {isSignUp
+                ? "EITHER YOUR PASSWORDS DON'T MATCH OR"
+                : 'EITHER YOU ENTERED INVALID CREDENTIALS OR '}{' '}
+              SOMETHING WENT WRONG
             </Alert>
           </Collapse>
         ) : (

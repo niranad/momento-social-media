@@ -13,7 +13,7 @@ export default function CommentSection({ post }) {
   const [comments, setComments] = useState(post?.comments);
   const [comment, setComment] = useState('');
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('profile'));
+  const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
   const commentsRef = useRef();
 
   const handleClick = async () => {

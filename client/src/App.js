@@ -16,7 +16,7 @@ export default function App() {
   };
 
   const userExists = () => {
-    user = JSON.parse(localStorage.getItem('profile'));
+    user = JSON.parse(localStorage.getItem('momentoProfileObj'));
     return user !== null;
   };
 

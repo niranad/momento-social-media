@@ -15,6 +15,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  isGoogleUser: {
+    type: Boolean,
+    default: false
+  }
 });
 
 export default model('User', UserSchema);

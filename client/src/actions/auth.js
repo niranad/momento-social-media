@@ -4,7 +4,6 @@ import {
   AUTH_COMPLETED,
   AUTH_FAILED,
   AUTH_PROCESSING,
-  SIGN_UP,
 } from '../constants/actiontypes';
 
 export const signIn = (formData, history) => async (dispatch) => {
@@ -15,9 +14,9 @@ export const signIn = (formData, history) => async (dispatch) => {
 
     dispatch({ type: AUTH, payload: data });
 
-    history.push('/');
-
     dispatch({ type: AUTH_COMPLETED });
+
+    history.push('/');
   } catch (error) {
     dispatch({ type: AUTH_FAILED });
     console.log(error);
@@ -30,8 +29,6 @@ export const signUp = (formData, history) => async (dispatch) => {
 
     await api.signUp(formData);
 
-    dispatch({ type: SIGN_UP, payload: true });
-
     dispatch({ type: AUTH_COMPLETED });
 
     localStorage.setItem('momento_sign_up_action', '***momento_sign***up***');
@@ -42,3 +39,20 @@ export const signUp = (formData, history) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const signInWithGoogle =
+  (googleResponse, history) => async (dispatch) => {
+    try {
+      dispatch({ type: AUTH_PROCESSING });
+
+      const { data } = await api.signInWithGoogle(googleResponse);
+
+      dispatch({ type: AUTH, payload: data });
+
+      dispatch({ type: AUTH_COMPLETED });
+
+      history.push('/');
+    } catch (error) {
+      console.log(error);
+    }
+  };

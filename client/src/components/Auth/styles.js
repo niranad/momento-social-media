@@ -27,6 +27,21 @@ export default makeStyles((theme) => ({
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+  logotext: {
+    fontWeight: 700,
+    letterSpacing: '-4px',
+    color: 'rgba(0, 170, 255, 1)',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 28,
+      letterSpacing: -1
+    }
+  },
+  brandpitch: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 18
+    }
   },
   emailBox: {
     textAlign: 'center',
