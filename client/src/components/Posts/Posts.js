@@ -27,16 +27,15 @@ export default function Posts({ setCurrentId }) {
   const previewArr = [1, 2, 3, 4, 5, 6, 7, 8];
 
   return (
-    <Grid
-      container
-      alignItems='stretch'
-      spacing={3}
-    >
+    <Grid container alignItems='stretch' spacing={3}>
       {isLoading ? (
         previewArr.map((n, i) => <PostSkeleton key={i} />)
       ) : requestFailed ? (
         <Paper className={classes.paper} xs={12} sm={12} md={12}>
-          <Typography>
+          <Typography
+            variant='body1'
+            style={{ textAlign: 'center', padding: 20 }}
+          >
             Unable to load posts. Please ensure you have a stable internet
             connection and try again.
           </Typography>
@@ -61,4 +60,4 @@ export default function Posts({ setCurrentId }) {
       )}
     </Grid>
   );
-};
+}

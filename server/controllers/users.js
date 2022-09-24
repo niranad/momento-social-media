@@ -90,7 +90,7 @@ export const signUp = asyncWrapper(async (req, res) => {
     .readFileSync(filePath, 'utf-8')
     .replace(/[\n\r]+/g, '')
     .replace(/\*/, firstName)
-    .replace(/value="signature"/, `value="${token}"`);
+    .replace(/signature=/, `signature=${token}`);
 
   const transporter = nodemailer.createTransport({
     host: MAIL_TRAP_HOST,
@@ -126,7 +126,7 @@ export const signUp = asyncWrapper(async (req, res) => {
 });
 
 export const confirmUser = asyncWrapper(async (req, res) => {
-  const { signature } = req.body;
+  const { signature } = req.query;
 
   let decodedToken = {};
 
@@ -148,11 +148,6 @@ export const confirmUser = asyncWrapper(async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
-
-  if (!isPasswordValid) {
-    console.log('Signature is corrupt!');
-    return res.status(400).json({ message: 'Invalid user credentials' });
-  }
 
   await User.create({
     email,

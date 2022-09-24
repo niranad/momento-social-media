@@ -7,6 +7,7 @@ import Home from './components/Home/Home';
 import Auth from './components/Auth/Auth';
 import NavBar from './components/NavBar/NavBar';
 import EmailConfirmation from './components/Auth/EmailConfirmation';
+import NotFound from './components/Auth/NotFound';
 
 export default function App() {
   let user = null;
@@ -59,18 +60,7 @@ export default function App() {
               path='/auth/signup/emailconfirmation'
               exact
               component={() =>
-                isSignUpAuth() ? (
-                  <EmailConfirmation />
-                ) : (
-                  <Typography
-                    style={{ marginTop: 20 }}
-                    variant='h4'
-                    color='secondary'
-                    compoenent='p'
-                  >
-                    Page Not Found
-                  </Typography>
-                )
+                isSignUpAuth() ? <EmailConfirmation /> : <NotFound />
               }
             />
           </Switch>

@@ -26,7 +26,7 @@ export default (
     case AUTH_FAILED:
       return { ...state, authFailed: true, authProcessing: false };
     case LOGOUT:
-      localStorage.clear();
+      localStorage.removeItem('momentoProfileObj');
       return { ...state, authData: null };
     default:
       return state;

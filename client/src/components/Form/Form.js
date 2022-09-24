@@ -35,7 +35,7 @@ export default function Form({ currentId, setCurrentId }) {
         updatePost(currentId, {
           ...postData,
           tags: postData.tags
-            .replace(/[?}{\]\[#_/$&@)><(|!%*^+\-\.\\]/g, '')
+            .replace(/[?}{\]\[#_/$&@)><(|!%*^+\.\\-]/g, '')
             .split(/[^a-z0-9]+/i)
             .filter((val) => val !== ''),
           name: user?.result?.name,
@@ -47,7 +47,7 @@ export default function Form({ currentId, setCurrentId }) {
           {
             ...postData,
             tags: postData.tags
-              .replace(/[?}{\]\[#_/$&@)><(|!%*^+\-\.\\]/g, '')
+              .replace(/[?}{\]\[#_/$&@)><(|!%*^+\.\\-]/g, '')
               .split(/[^a-z0-9]+/i)
               .filter((val) => val !== ''),
             name: user?.result?.name,
