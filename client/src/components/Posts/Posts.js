@@ -7,22 +7,9 @@ import PostSkeleton from './Post/PostSkeleton';
 
 export default function Posts({ setCurrentId }) {
   const classes = useStyles();
-  const { postsData, isLoading, requestFailed } = useSelector(
+  const { postsData, isLoading, fetchPostsFailed } = useSelector(
     ({ posts }) => posts,
   );
-
-  if (!isLoading && !postsData.length)
-    return (
-      <Typography
-        style={{ textAlign: 'center' }}
-        gutterBottom
-        color='textSecondary'
-        variant='h4'
-        component='p'
-      >
-        No posts to display.
-      </Typography>
-    );
 
   const previewArr = [1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -30,10 +17,10 @@ export default function Posts({ setCurrentId }) {
     <Grid container alignItems='stretch' spacing={3}>
       {isLoading ? (
         previewArr.map((n, i) => <PostSkeleton key={i} />)
-      ) : requestFailed ? (
+      ) : fetchPostsFailed ? (
         <Paper className={classes.paper} xs={12} sm={12} md={12}>
           <Typography
-            variant='body1'
+            variant='h6'
             style={{ textAlign: 'center', padding: 20 }}
           >
             Unable to load posts. Please ensure you have a stable internet

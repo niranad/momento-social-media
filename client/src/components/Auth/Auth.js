@@ -10,8 +10,6 @@ import {
   CircularProgress,
   IconButton,
   Collapse,
-  Modal,
-  Box,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
@@ -43,7 +41,7 @@ export default function Auth() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openAlert, setOpenAlert] = useState(true);
-  
+
   useEffect(() => {
     localStorage.removeItem('momento_sign_up_action');
   }, []);
@@ -107,7 +105,12 @@ export default function Auth() {
         >
           Momento
         </Typography>
-        <Typography className={classes.brandpitch} gutterBottom variant='h6' component='h6'>
+        <Typography
+          className={classes.brandpitch}
+          gutterBottom
+          variant='h6'
+          component='h6'
+        >
           Helps you connect with people and share notable moments in your life.
         </Typography>
       </div>
@@ -135,9 +138,9 @@ export default function Auth() {
               }
             >
               {isSignUp
-                ? "EITHER YOUR PASSWORDS DON'T MATCH OR"
-                : 'EITHER YOU ENTERED INVALID CREDENTIALS OR '}{' '}
-              SOMETHING WENT WRONG
+                ? "EITHER YOUR PASSWORDS DON'T MATCH"
+                : 'EITHER YOU ENTERED INVALID CREDENTIALS'}{' '}
+              OR SOMETHING WENT WRONG
             </Alert>
           </Collapse>
         ) : (

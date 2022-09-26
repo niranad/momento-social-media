@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grow,
   Container,
@@ -7,16 +7,20 @@ import {
   AppBar,
   Button,
   TextField,
-  Icon
+  Icon,
+  Collapse,
+  CircularProgress,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import { getPostsBySearch } from '../../actions/posts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Posts from '../Posts/Posts';
 import { useHistory, useLocation } from 'react-router-dom';
 import ChipInput from 'material-ui-chip-input';
 import Pagination from '../Pagination';
 import Form from '../Form/Form';
 import useStyles from './styles';
+import { SET_TRANSIENT_STATE } from '../../constants/actiontypes';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -31,10 +35,13 @@ export default function Home() {
   const page = query.get('page') || 1;
   const [searchTitle, setSearchTitle] = useState('');
   const [searchTags, setSearchTags] = useState([]);
+  const [openAlert, setOpenAlert] = useState(true);
+  const { isFetchingBySearch, fetchBySearchFailed, searchIsEmpty } =
+    useSelector(({ posts }) => posts);
 
-  const searchPost = () => {
+  const searchPost = async () => {
     if (searchTitle.trim() || searchTags.length > 0) {
-      dispatch(
+      await dispatch(
         getPostsBySearch({ title: searchTitle, tags: searchTags.join(',') }),
       );
       history.push(
@@ -60,6 +67,22 @@ export default function Home() {
   const handleDelete = (tagToDelete) => {
     setSearchTags(searchTags.filter((tag) => tag !== tagToDelete));
   };
+
+  useEffect(() => {
+    if (fetchBySearchFailed || searchIsEmpty) {
+      if (!openAlert) setOpenAlert(true);
+
+      const timeout = setTimeout(() => {
+        setOpenAlert(true);
+
+        dispatch({ type: SET_TRANSIENT_STATE });
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [fetchBySearchFailed, searchIsEmpty]);
 
   return (
     <Grow in>
@@ -98,23 +121,43 @@ export default function Home() {
                 onAdd={handleAdd}
                 onDelete={handleDelete}
                 label='Search Tags'
+                placeholder='tag without # and press enter'
                 variant='outlined'
               />
+              {fetchBySearchFailed || searchIsEmpty ? (
+                <Collapse in={openAlert}>
+                  <Alert
+                    style={{ marginTop: 7, fontSize: 16 }}
+                    severity='error'
+                  >
+                    {fetchBySearchFailed
+                      ? 'Failed to search posts'
+                      : 'No post with the search criteria'}
+                  </Alert>
+                </Collapse>
+              ) : (
+                ''
+              )}
               <Button
                 onClick={searchPost}
                 className={classes.searchButton}
                 variant='contained'
                 color='primary'
               >
-                Search&nbsp;<Icon sx={{ color: '#f8f7fc' }}>search</Icon>
+                Search&nbsp;
+                {isFetchingBySearch ? (
+                  <CircularProgress size='18px' sx={{ color: '#fff' }} />
+                ) : (
+                  <Icon sx={{ color: '#f8f7fc' }}>search</Icon>
+                )}
               </Button>
             </AppBar>
             <Form currentId={currentId} setCurrentId={setCurrentId} />
-            <Paper className={classes.pagination} elevation={6}>
-              <Pagination page={page} />
-            </Paper>
           </Grid>
         </Grid>
+        <Paper className={classes.pagination} elevation={6}>
+          <Pagination page={page} />
+        </Paper>
       </Container>
     </Grow>
   );

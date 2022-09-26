@@ -25,7 +25,7 @@ export const fetchPostsBySearch = (searchQuery) =>
   );
 export const createPost = (newPost) => API.post('/posts', newPost);
 export const updatePost = (id, updatedPost) =>
-  axios.patch(`/posts/${id}/editPost`, updatedPost);
+  API.patch(`/posts/${id}/editPost`, updatedPost);
 export const comment = (value, id) =>
   API.post(`/posts/${id}/commentPost`, { value });
 export const deletePost = (id) => API.delete(`/posts/${id}`);

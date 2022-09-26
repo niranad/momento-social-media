@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Avatar } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
-import UserIcon from '@material-ui/icons/PersonOutlineSharp';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { LOGOUT } from '../../constants/actiontypes';
@@ -63,7 +62,12 @@ export default function NavBar() {
               {user?.result?.name?.charAt(0)}
             </Avatar>
             <Typography className={classes.userName} variant='h6'>
-              {user?.result?.name}
+              {user?.result?.name.length > 12
+                ? `${user?.result?.name.split(' ')[0]} ${user?.result?.name
+                    .split(' ')[1]
+                    .charAt(0)
+                    .toUpperCase()}.`
+                : user?.result?.name}
             </Typography>
             <Button
               variant='contained'

@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import FileBase from 'react-file-base64';
-import { TextField, Typography, Button, Paper, Icon } from '@material-ui/core';
+import {
+  TextField,
+  Typography,
+  Button,
+  Paper,
+  Icon,
+  CircularProgress,
+  Collapse,
+} from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import { useDispatch } from 'react-redux';
 import { createPost, updatePost } from '../../actions/posts';
 import useStyles from './styles';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { SET_TRANSIENT_STATE } from '../../constants/actiontypes';
 
 export default function Form({ currentId, setCurrentId }) {
   const classes = useStyles();
@@ -15,6 +25,15 @@ export default function Form({ currentId, setCurrentId }) {
   );
   const history = useHistory();
   const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
+  const {
+    isCreatingPost,
+    isUpdatingPost,
+    createdPost,
+    createPostFailed,
+    updatedPost,
+    updatePostFailed,
+  } = useSelector(({ posts }) => posts);
+  const [openAlert, setOpenAlert] = useState(true);
 
   const [postData, setPostData] = useState({
     title: '',
@@ -25,7 +44,24 @@ export default function Form({ currentId, setCurrentId }) {
 
   useEffect(() => {
     if (post) setPostData({ ...post, tags: post.tags.join(',') });
-  }, [post]);
+
+    if (createdPost || createPostFailed || updatedPost || updatePostFailed) {
+      if (!openAlert) setOpenAlert(true);
+
+      const timeout = setTimeout(() => {
+        setOpenAlert(false);
+
+        dispatch({ type: SET_TRANSIENT_STATE })
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [post, createdPost, createPostFailed, updatedPost, updatePostFailed]);
+
+  const enableSubmit = () =>
+    postData.title !== '' && postData.message !== '' && !isCreatingPost;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,17 +105,6 @@ export default function Form({ currentId, setCurrentId }) {
       selectedFile: '',
     });
   };
-
-  if (!user?.result?.name) {
-    return (
-      <Paper elevation={6}>
-        <Typography className={classes.paper} variant='h6'>
-          Please Sign In to create your own Moments and like other peoples'
-          Moments.
-        </Typography>
-      </Paper>
-    );
-  }
 
   return (
     <Paper className={classes.paper} elevation={6}>
@@ -134,16 +159,39 @@ export default function Form({ currentId, setCurrentId }) {
             }
           />
         </div>
-
+        {createdPost || updatedPost || createPostFailed || updatePostFailed ? (
+          <Collapse in={openAlert}>
+            <Alert
+              style={{ marginTop: 7, fontSize: 16 }}
+              severity={createdPost || updatedPost ? 'success' : 'error'}
+            >
+              {createdPost
+                ? 'Moment Created'
+                : updatedPost
+                ? 'Moment Updated'
+                : createPostFailed
+                ? 'Moment creation failed. Try again.'
+                : 'Moment update failed. Try again.'}
+            </Alert>
+          </Collapse>
+        ) : (
+          ''
+        )}
         <Button
           className={classes.buttonSubmit}
           variant='contained'
           color='primary'
           size='large'
           type='submit'
+          disabled={!enableSubmit()}
           fullWidth
         >
-          Submit&nbsp;<Icon sx={{ color: '#f8f7fc' }}>rocket_launch</Icon>
+          Submit&nbsp;
+          {isCreatingPost || isUpdatingPost ? (
+            <CircularProgress size='18px' />
+          ) : (
+            <Icon sx={{ color: '#f8f7fc' }}>rocket_launch</Icon>
+          )}
         </Button>
         <Button
           className={classes.clear}

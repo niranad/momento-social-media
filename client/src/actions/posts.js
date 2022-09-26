@@ -16,6 +16,12 @@ import {
   UPDATE_FAILED,
   COMMENT_FAILED,
   DELETE_FAILED,
+  CREATE_PENDING,
+  UPDATE_PENDING,
+  DELETE_PENDING,
+  FETCH_BY_SEARCH_PENDING,
+  NO_POST_FROM_SEARCH,
+  COMMENT_PENDING,
 } from '../constants/actiontypes';
 
 // Action creators
@@ -51,13 +57,16 @@ export const getPosts = (page) => async (dispatch) => {
 
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    dispatch({ type: FETCH_BY_SEARCH_PENDING });
 
     const { data } = await api.fetchPostsBySearch(searchQuery);
 
-    dispatch({ type: FETCH_BY_SEARCH, payload: data });
+    if (!data.length) {
+      dispatch({ type: NO_POST_FROM_SEARCH });
+      return;
+    }
 
-    dispatch({ type: END_LOADING });
+    dispatch({ type: FETCH_BY_SEARCH, payload: data });
   } catch (error) {
     dispatch({ type: FETCH_BY_SEARCH_FAILED });
     console.log(error);
@@ -66,15 +75,13 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
 
 export const createPost = (post, history) => async (dispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    dispatch({ type: CREATE_PENDING });
 
     const { data } = await api.createPost(post);
 
     dispatch({ type: CREATE, payload: data });
 
     history.push(`/posts/${data._id}`);
-
-    dispatch({ type: END_LOADING });
   } catch (error) {
     dispatch({ type: CREATE_FAILED });
     console.log(error);
@@ -83,6 +90,7 @@ export const createPost = (post, history) => async (dispatch) => {
 
 export const updatePost = (id, post) => async (dispatch) => {
   try {
+    dispatch({ type: UPDATE_PENDING });
     const { data } = await api.updatePost(id, post);
 
     dispatch({ type: UPDATE, payload: data });
@@ -94,6 +102,8 @@ export const updatePost = (id, post) => async (dispatch) => {
 
 export const commentPost = (value, id) => async (dispatch) => {
   try {
+    dispatch({ type: COMMENT_PENDING });
+
     const { data } = await api.comment(value, id);
 
     dispatch({ type: COMMENT, payload: data });
@@ -107,6 +117,7 @@ export const commentPost = (value, id) => async (dispatch) => {
 
 export const deletePost = (id) => async (dispatch) => {
   try {
+    dispatch({ type: DELETE_PENDING });
     await api.deletePost(id);
 
     dispatch({ type: DELETE, payload: id });

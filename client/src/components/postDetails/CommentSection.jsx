@@ -1,12 +1,20 @@
-import React, { useState, useRef } from 'react';
-import { Typography, TextField, Button } from '@material-ui/core';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Typography,
+  TextField,
+  Button,
+  Collapse,
+  CircularProgress,
+} from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
 import CommentIcon from '@material-ui/icons/Comment';
 import CreateIcon from '@material-ui/icons/Create';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
 import { commentPost } from '../../actions/posts';
 import CommentInfo from './CommentInfo';
+import { SET_TRANSIENT_STATE } from '../../constants/actiontypes';
 
 export default function CommentSection({ post }) {
   const classes = useStyles();
@@ -15,6 +23,10 @@ export default function CommentSection({ post }) {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('momentoProfileObj'));
   const commentsRef = useRef();
+  const { isCommentingPost, commentedPost, commentPostFailed } = useSelector(
+    ({ posts }) => posts,
+  );
+  const [openAlert, setOpenAlert] = useState(true);
 
   const handleClick = async () => {
     const finalComment = `${user.result.name}: ${comment}`;
@@ -27,6 +39,22 @@ export default function CommentSection({ post }) {
 
     commentsRef.current.scrollIntoView({ behaviour: 'smooth' });
   };
+
+  useEffect(() => {
+    if (commentedPost || commentPostFailed) {
+      if (!openAlert) setOpenAlert(true);
+
+      const timeout = setTimeout(() => {
+        setOpenAlert(false);
+
+        dispatch({ type: SET_TRANSIENT_STATE });
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [commentedPost, commentPostFailed]);
 
   return (
     <div>
@@ -70,15 +98,34 @@ export default function CommentSection({ post }) {
                 setComment(e.target.value);
               }}
             />
+            {commentedPost || commentPostFailed ? (
+              <Collapse in={openAlert}>
+                <Alert
+                  style={{ marginTop: 7, fontSize: 16 }}
+                  severity={commentedPost ? 'success' : 'error'}
+                >
+                  {commentedPost
+                    ? 'Comment added'
+                    : 'Failed to comment post. Try again.'}
+                </Alert>
+              </Collapse>
+            ) : (
+              ''
+            )}
             <Button
-              styles={{ marginTop: '10px' }}
+              styles={{ marginTop: '14px' }}
               fullWidth
               disabled={!comment}
               variant='contained'
               color='primary'
               onClick={handleClick}
             >
-              <AddCommentRoundedIcon sx={{ color: '#f8f7fc' }} /> Add Comment
+              Add Comment&nbsp;
+              {isCommentingPost ? (
+                <CircularProgress size='18px' />
+              ) : (
+                <AddCommentRoundedIcon sx={{ color: '#f8f7fc' }} />
+              )}
             </Button>
           </div>
         )}

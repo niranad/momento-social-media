@@ -14,15 +14,48 @@ import {
   FETCH_BY_SEARCH_FAILED,
   FETCH_ALL_FAILED,
   CREATE_FAILED,
+  FETCH_BY_SEARCH_PENDING,
+  COMMENT_PENDING,
+  COMMENT_FAILED,
+  UPDATE_PENDING,
+  DELETE_PENDING,
+  NO_POST_FROM_SEARCH,
+  CREATE_PENDING,
 } from '../constants/actiontypes';
 
 export default (
-  state = { isLoading: true, requestFailed: false, postsData: [] },
+  state = {
+    isLoading: true,
+    postsData: [],
+    isCreatingPost: false,
+    createPostFailed: false,
+    createdPost: false,
+    isUpdatingPost: false,
+    updatePostFailed: false,
+    updatedPost: false,
+    isDeletingPost: false,
+    deletePostFailed: false,
+    isFetchingPosts: false,
+    fetchPostsFailed: false,
+    isFetchingPost: false,
+    fetchPostFailed: false,
+    isFetchingBySearch: false,
+    fetchBySearchFailed: false,
+    searchIsEmpty: false,
+    isCommentingPost: false,
+    commentPostFailed: false,
+    commentedPost: false,
+  },
   action,
 ) => {
   switch (action.type) {
     case START_LOADING:
-      return { ...state, isLoading: true, requestFailed: false };
+      return {
+        ...state,
+        isLoading: true,
+        fetchPostFailed: false,
+        fetchPostsFailed: false,
+      };
 
     case END_LOADING:
       return { ...state, isLoading: false };
@@ -36,16 +69,28 @@ export default (
       };
 
     case FETCH_ALL_FAILED:
-      return { ...state, requestFailed: true };
+      return { ...state, fetchPostsFailed: true, isLoading: false };
 
     case FETCH_BY_SEARCH:
       return {
         ...state,
         postsData: action.payload,
+        isFetchingBySearch: false,
+      };
+
+    case FETCH_BY_SEARCH_PENDING:
+      return {
+        ...state,
+        isFetchingBySearch: true,
+        searchIsEmpty: false,
+        fetchBySearchFailed: false,
       };
 
     case FETCH_BY_SEARCH_FAILED:
-      return { ...state, requestFailed: true };
+      return { ...state, fetchBySearchFailed: true, isFetchingBySearch: false };
+
+    case NO_POST_FROM_SEARCH:
+      return { ...state, searchIsEmpty: true, isFetchingBySearch: false };
 
     case FETCH_POST:
       return {
@@ -54,13 +99,30 @@ export default (
       };
 
     case FETCH_POST_FAILED:
-      return { ...state, requestFailed: true };
+      return { ...state, fetchPostFailed: true, isLoading: false };
 
     case CREATE:
-      return { ...state, postsData: [...state.postsData, action.payload] };
+      return {
+        ...state,
+        postsData: [...state.postsData, action.payload],
+        isCreatingPost: false,
+        createdPost: true,
+      };
+
+    case CREATE_PENDING:
+      return {
+        ...state,
+        isCreatingPost: true,
+        createdPost: false,
+        createPostFailed: false,
+      };
 
     case CREATE_FAILED:
-      return { ...state, isLoading: false, requestFailed: true };
+      return {
+        ...state,
+        createPostFailed: true,
+        isCreatingPost: false,
+      };
 
     case COMMENT:
       return {
@@ -68,7 +130,20 @@ export default (
         postsData: state.postsData.map((post) =>
           post._id !== action.payload._id ? post : action.payload,
         ),
+        isCommentingPost: false,
+        commentedPost: true,
       };
+
+    case COMMENT_PENDING:
+      return {
+        ...state,
+        isCommentingPost: true,
+        commentPostFailed: false,
+        commentedPost: false,
+      };
+
+    case COMMENT_FAILED:
+      return { ...state, isCommentingPost: false, commentPostFailed: true };
 
     case UPDATE:
       return {
@@ -76,10 +151,20 @@ export default (
         postsData: state.postsData.map((post) =>
           post._id === action.payload._id ? action.payload : post,
         ),
+        isUpdatingPost: false,
+        updatedPost: true,
+      };
+
+    case UPDATE_PENDING:
+      return {
+        ...state,
+        isUpdatingPost: true,
+        updatedPost: false,
+        updatePostFailed: false,
       };
 
     case UPDATE_FAILED:
-      return { ...state, requestFailed: true };
+      return { ...state, updatePostFailed: true, isUpdatingPost: false };
 
     case DELETE:
       return {
@@ -87,10 +172,14 @@ export default (
         postsData: state.postsData.filter(
           (post) => post._id !== action.payload,
         ),
+        isDeletingPost: false,
       };
 
+    case DELETE_PENDING:
+      return { ...state, isDeletingPost: true, deletePostFailed: false };
+
     case DELETE_FAILED:
-      return { ...state, requestFailed: true };
+      return { ...state, deletePostFailed: true, isDeletingPost: false };
 
     default:
       return state;
