@@ -17,8 +17,20 @@ export default makeStyles((theme) => ({
   fileInput: {
     width: '97%',
     margin: '10px 0',
+    textTransform: 'none',
   },
   buttonSubmit: {
     marginBottom: 10,
+  },
+  imgPreview: {
+    margin: '10px 0',
+    width: '97%',
+    padding: 8,
+    height: '150px',
+    boxShadow: '1px 2px 6px 2px rgba(0, 0, 0, 0.85)',
+  },
+  picture: {
+    width: '100%',
+    height: '100%',
   },
 }));

@@ -23,5 +23,6 @@ export const AUTH = 'AUTH';
 export const AUTH_FAILED = 'AUTH_FAILED';
 export const AUTH_COMPLETED = 'AUTH_COMPLETED';
 export const LOGOUT = 'LOGOUT';
+export const SET_TRANSIENT_STATE = 'SET_TRANSIENT_STATE';
 export const START_LOADING = 'START_LOADING';
 export const END_LOADING = 'END_LOADING';

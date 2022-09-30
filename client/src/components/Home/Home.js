@@ -12,7 +12,6 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { getPostsBySearch } from '../../actions/posts';
 import { useDispatch, useSelector } from 'react-redux';
 import Posts from '../Posts/Posts';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -32,6 +31,11 @@ export default function Home() {
   const [currentId, setCurrentId] = useState(0);
   const query = useQuery();
   const history = useHistory();
+  const searchQuery = {
+    searchpage: query.get('searchpage') || 1,
+    title: query.get('title'),
+    tags: query.get('tags'),
+  };
   const page = query.get('page') || 1;
   const [searchTitle, setSearchTitle] = useState('');
   const [searchTags, setSearchTags] = useState([]);
@@ -40,18 +44,11 @@ export default function Home() {
     useSelector(({ posts }) => posts);
 
   const searchPost = async () => {
-    if (searchTitle.trim() || searchTags.length > 0) {
-      await dispatch(
-        getPostsBySearch({ title: searchTitle, tags: searchTags.join(',') }),
-      );
-      history.push(
-        `/posts/search?title=${searchTitle || 'none'}&tags=${searchTags.join(
-          ',',
-        )}`,
-      );
-    } else {
-      history.push('/');
-    }
+    history.push(
+      `/posts/search?searchpage=${searchQuery.searchpage}&title=${
+        searchTitle || searchQuery.title || 'none'
+      }&tags=${searchTags.join(',') || searchQuery.tags || 'none'}`,
+    );
   };
 
   const handleKeyPress = (e) => {
@@ -63,6 +60,9 @@ export default function Home() {
   const handleAdd = (tag) => {
     setSearchTags([...searchTags, tag]);
   };
+
+  const enableSearch = () =>
+    (searchTitle !== '' || searchTags.length) && !isFetchingBySearch;
 
   const handleDelete = (tagToDelete) => {
     setSearchTags(searchTags.filter((tag) => tag !== tagToDelete));
@@ -143,10 +143,11 @@ export default function Home() {
                 className={classes.searchButton}
                 variant='contained'
                 color='primary'
+                disabled={!enableSearch()}
               >
                 Search&nbsp;
                 {isFetchingBySearch ? (
-                  <CircularProgress size='18px' sx={{ color: '#fff' }} />
+                  <CircularProgress size='18px' sx={{ color: '#f8f7fc' }} />
                 ) : (
                   <Icon sx={{ color: '#f8f7fc' }}>search</Icon>
                 )}
@@ -156,7 +157,7 @@ export default function Home() {
           </Grid>
         </Grid>
         <Paper className={classes.pagination} elevation={6}>
-          <Pagination page={page} />
+          <Pagination page={page} searchQuery={searchQuery} />
         </Paper>
       </Container>
     </Grow>

@@ -7,6 +7,11 @@ import {
   Button,
   Typography,
   ButtonBase,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
@@ -28,6 +33,20 @@ export default function Post({ post, setCurrentId }) {
   const [likes, setLikes] = useState(post?.likes);
   const userId = user?.result?._id;
   const hasLikedPost = likes?.some((id) => id === userId);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleDelete = () => {
+    dispatch(deletePost(post._id));
+    handleCloseDialog();
+  };
+
+  const confirmDelete = () => {
+    setOpenDialog(true);
+  };
 
   const openPost = () => {
     history.push(`/posts/${post._id}`);
@@ -53,7 +72,6 @@ export default function Post({ post, setCurrentId }) {
           {likes.length >= 2
             ? ` and ${likes.length - 1} other${likes.length - 1 > 1 ? 's' : ''}`
             : ''}{' '}
-          liked this
         </>
       ) : (
         <>
@@ -72,6 +90,17 @@ export default function Post({ post, setCurrentId }) {
   };
 
   const message = !post?.message ? '' : post?.message;
+  const formatTags = () => {
+    if (!post?.tags.length) {
+      return '';
+    }
+    let tags;
+    if (post?.tags.length > 6) {
+      tags = post?.tags.filter((tag, i) => i < 6);
+      return `#${tags.join(', #')}...`;
+    }
+    return `#${post?.tags.join(', #')}`;
+  };
 
   useEffect(() => {
     setIsLengthy(message.length > 120);
@@ -86,7 +115,9 @@ export default function Post({ post, setCurrentId }) {
           title={post.title}
         />
         <div className={classes.overlay}>
-          <Typography variant='h6'>{post.name}</Typography>
+          <Typography variant='h6'>
+            {post.creator === userId ? 'You' : post.name}
+          </Typography>
           <Typography variant='body2'>
             {Moment(post.createdAt).fromNow()}
           </Typography>
@@ -108,15 +139,7 @@ export default function Post({ post, setCurrentId }) {
         </div>
         <div className={classes.details}>
           <Typography variant='body2' color='textSecondary'>
-            {post?.tags
-              ? post.tags.length > 6
-                ? `${post.tags.map((tag, i, arr) =>
-                    i < 6 ? `#${tag}${i < 5 ? ', ' : ''}` : '',
-                  )}...`
-                : post.tags.map(
-                    (tag, i, arr) => `#${tag}${i < arr.length - 1 ? ', ' : ''}`,
-                  )
-              : ''}
+            {formatTags()}
           </Typography>
         </div>
         <Typography className={classes.title} variant='h6' gutterBottom>
@@ -143,14 +166,35 @@ export default function Post({ post, setCurrentId }) {
           <Button
             className={classes.cardActionsButton}
             size='small'
-            color='primary'
-            onClick={() => dispatch(deletePost(post._id))}
+            color='secondary'
+            onClick={confirmDelete}
           >
             <DeleteIcon fontSize='small' />
             Delete
           </Button>
         )}
       </CardActions>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>
+          {`Delete '${post.title}' moment?`}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure you want to delete this moment?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} autoFocus>
+            No
+          </Button>
+          <Button onClick={handleDelete}>Yes</Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }

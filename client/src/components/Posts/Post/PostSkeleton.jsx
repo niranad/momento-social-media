@@ -23,7 +23,7 @@ const PostSkeleton = ({ key }) => {
           height='50%'
           animation='wave'
         >
-          <CardMedia className={classes.media} img={''} />
+          <CardMedia className={classes.media} image='' />
         </Skeleton>
         <div className={classes.details}>
           <Typography variant='body2' color='textSecondary'>

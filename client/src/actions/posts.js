@@ -61,9 +61,8 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
 
     const { data } = await api.fetchPostsBySearch(searchQuery);
 
-    if (!data.length) {
+    if (!data.data.length) {
       dispatch({ type: NO_POST_FROM_SEARCH });
-      return;
     }
 
     dispatch({ type: FETCH_BY_SEARCH, payload: data });

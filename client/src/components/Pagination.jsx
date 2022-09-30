@@ -3,28 +3,45 @@ import { Pagination, PaginationItem } from '@material-ui/lab';
 import useStyles from './styles';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPosts } from '../actions/posts';
+import { getPosts, getPostsBySearch } from '../actions/posts';
 
-const Paginate = ({ page }) => {
-  const { numberOfPages } = useSelector(({ posts }) => posts);
+const Paginate = ({ page, searchQuery }) => {
+  const { currentPage, numberOfPages } = useSelector(({ posts }) => posts);
   const classes = useStyles();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (page) {
+    if (searchQuery.title || searchQuery.tags) {
+      dispatch(
+        getPostsBySearch({
+          searchpage: searchQuery.searchpage,
+          title: searchQuery.title,
+          tags: searchQuery.tags,
+        }),
+      );
+    } else {
       dispatch(getPosts(page));
     }
-  }, [page]);
+  }, [page, searchQuery.searchpage, searchQuery.title, searchQuery.tags]);
 
   return (
     <Pagination
       className={classes.ul}
       count={numberOfPages}
-      page={Number(page) || 1}
+      page={currentPage || 1}
+      size='medium'
       variant='outlined'
       color='primary'
       renderItem={(item) => (
-        <PaginationItem {...item} component={Link} to={`/posts?page=${item.page}`} />
+        <PaginationItem
+          {...item}
+          component={Link}
+          to={
+            !searchQuery.title
+              ? `/posts?page=${item.page}`
+              : `/posts/search?searchpage=${item.page}&title=${searchQuery.title}&tags=${searchQuery.tags}`
+          }
+        />
       )}
     />
   );

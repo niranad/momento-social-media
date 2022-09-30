@@ -11,8 +11,8 @@ export const getPosts = asyncWrapper(async (req, res) => {
 
   const posts = await PostMessage.find()
     .sort({ _id: -1 })
-    .limit(LIMIT)
-    .skip(startIndex);
+    .skip(startIndex)
+    .limit(LIMIT);
 
   res.status(200).json({
     data: posts,
@@ -22,17 +22,28 @@ export const getPosts = asyncWrapper(async (req, res) => {
 });
 
 export const getPostsBySearch = asyncWrapper(async (req, res) => {
-  let { title, tags } = req.query;
-
-  const LIMIT = 8;
+  let { searchpage, title, tags } = req.query;
 
   title = new RegExp(title, 'i');
 
+  const LIMIT = 8;
+  const startIndex = LIMIT * (Number(searchpage) - 1);
+  const total = await PostMessage.countDocuments({
+    $or: [{ title }, { tags: { $in: tags.split(',') } }],
+  });
+
   const posts = await PostMessage.find({
     $or: [{ title }, { tags: { $in: tags.split(',') } }],
-  }).sort({ _id: -1}).limit(LIMIT);
+  })
+    .sort({ _id: -1 })
+    .skip(startIndex)
+    .limit(LIMIT);
 
-  res.status(200).json(posts);
+  res.status(200).json({
+    data: posts,
+    currentPage: Number(searchpage),
+    numberOfPages: Math.ceil(total / LIMIT),
+  });
 });
 
 export const createPost = asyncWrapper(async (req, res) => {
@@ -79,7 +90,9 @@ export const commentPost = asyncWrapper(async (req, res) => {
 
   post.comments.push(value);
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+  const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {
+    new: true,
+  });
 
   res.status(200).json(updatedPost);
 });
@@ -114,9 +127,9 @@ export const likePost = asyncWrapper(async (req, res) => {
 
   const index = post.likes.findIndex((id) => id === String(req.userId));
 
-  if (index === -1) {
+  if (index < 0) {
     // wants to like
-    post.likes.push(req.userId);
+    post.likes.push(String(req.userId));
   } else {
     // wants to unlike
     post.likes = post.likes.filter((id) => id !== String(req.userId));

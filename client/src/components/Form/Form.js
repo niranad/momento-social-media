@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import FileBase from 'react-file-base64';
 import {
   TextField,
   Typography,
@@ -16,6 +15,7 @@ import useStyles from './styles';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { SET_TRANSIENT_STATE } from '../../constants/actiontypes';
+import { PhotoCamera } from '@material-ui/icons';
 
 export default function Form({ currentId, setCurrentId }) {
   const classes = useStyles();
@@ -43,7 +43,13 @@ export default function Form({ currentId, setCurrentId }) {
   });
 
   useEffect(() => {
-    if (post) setPostData({ ...post, tags: post.tags.join(',') });
+    if (post)
+      setPostData({
+        ...post,
+        selectedFile:
+          typeof post?.selectedFile === 'object' ? '' : post?.selectedFile,
+        tags: post?.tags.join(','),
+      });
 
     if (createdPost || createPostFailed || updatedPost || updatePostFailed) {
       if (!openAlert) setOpenAlert(true);
@@ -51,7 +57,7 @@ export default function Form({ currentId, setCurrentId }) {
       const timeout = setTimeout(() => {
         setOpenAlert(false);
 
-        dispatch({ type: SET_TRANSIENT_STATE })
+        dispatch({ type: SET_TRANSIENT_STATE });
       }, 3000);
 
       return () => {
@@ -60,8 +66,35 @@ export default function Form({ currentId, setCurrentId }) {
     }
   }, [post, createdPost, createPostFailed, updatedPost, updatePostFailed]);
 
+  const onFileInput = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener(
+      'load',
+      () => {
+        setPostData({ ...postData, selectedFile: reader.result });
+      },
+      false,
+    );
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   const enableSubmit = () =>
     postData.title !== '' && postData.message !== '' && !isCreatingPost;
+
+  const clear = () => {
+    setCurrentId(null);
+    setPostData({
+      title: '',
+      message: '',
+      tags: '',
+      selectedFile: '',
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -94,16 +127,6 @@ export default function Form({ currentId, setCurrentId }) {
     }
 
     clear();
-  };
-
-  const clear = () => {
-    setCurrentId(null);
-    setPostData({
-      title: '',
-      message: '',
-      tags: '',
-      selectedFile: '',
-    });
   };
 
   return (
@@ -150,15 +173,26 @@ export default function Form({ currentId, setCurrentId }) {
           }}
         />
 
-        <div className={classes.fileInput}>
-          <FileBase
-            type='file'
-            multiple={false}
-            onDone={({ base64 }) =>
-              setPostData({ ...postData, selectedFile: base64 })
-            }
-          />
-        </div>
+        <Button
+          variant='outlined'
+          className={classes.fileInput}
+          component='label'
+          endIcon={<PhotoCamera color='primary' size='medium' />}
+        >
+          <input hidden type='file' accept='image/*' onChange={onFileInput} />
+          {postData?.selectedFile ? 'Replace Image' : 'Upload Image'}
+        </Button>
+        {postData?.selectedFile ? (
+          <div id='img-preview-div' className={classes.imgPreview}>
+            <img
+              className={classes.picture}
+              src={postData.selectedFile}
+              alt='Moment Picture'
+            />
+          </div>
+        ) : (
+          ''
+        )}
         {createdPost || updatedPost || createPostFailed || updatePostFailed ? (
           <Collapse in={openAlert}>
             <Alert

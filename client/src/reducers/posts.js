@@ -21,6 +21,7 @@ import {
   DELETE_PENDING,
   NO_POST_FROM_SEARCH,
   CREATE_PENDING,
+  SET_TRANSIENT_STATE,
 } from '../constants/actiontypes';
 
 export default (
@@ -74,23 +75,34 @@ export default (
     case FETCH_BY_SEARCH:
       return {
         ...state,
-        postsData: action.payload,
+        postsData: action.payload.data,
+        currentPage: action.payload.currentPage,
+        numberOfPages: action.payload.numberOfPages,
         isFetchingBySearch: false,
+        isLoading: false,
       };
 
     case FETCH_BY_SEARCH_PENDING:
       return {
         ...state,
         isFetchingBySearch: true,
-        searchIsEmpty: false,
-        fetchBySearchFailed: false,
       };
 
     case FETCH_BY_SEARCH_FAILED:
-      return { ...state, fetchBySearchFailed: true, isFetchingBySearch: false };
+      return {
+        ...state,
+        fetchBySearchFailed: true,
+        isFetchingBySearch: false,
+        isLoading: false,
+      };
 
     case NO_POST_FROM_SEARCH:
-      return { ...state, searchIsEmpty: true, isFetchingBySearch: false };
+      return {
+        ...state,
+        searchIsEmpty: true,
+        isFetchingBySearch: false,
+        isLoading: false,
+      };
 
     case FETCH_POST:
       return {
@@ -113,8 +125,6 @@ export default (
       return {
         ...state,
         isCreatingPost: true,
-        createdPost: false,
-        createPostFailed: false,
       };
 
     case CREATE_FAILED:
@@ -138,8 +148,6 @@ export default (
       return {
         ...state,
         isCommentingPost: true,
-        commentPostFailed: false,
-        commentedPost: false,
       };
 
     case COMMENT_FAILED:
@@ -159,8 +167,6 @@ export default (
       return {
         ...state,
         isUpdatingPost: true,
-        updatedPost: false,
-        updatePostFailed: false,
       };
 
     case UPDATE_FAILED:
@@ -180,6 +186,19 @@ export default (
 
     case DELETE_FAILED:
       return { ...state, deletePostFailed: true, isDeletingPost: false };
+
+    case SET_TRANSIENT_STATE:
+      return {
+        ...state,
+        createdPost: false,
+        createPostFailed: false,
+        updatedPost: false,
+        updatePostFailed: false,
+        commentedPost: false,
+        commentPostFailed: false,
+        fetchBySearchFailed: false,
+        searchIsEmpty: false,
+      };
 
     default:
       return state;

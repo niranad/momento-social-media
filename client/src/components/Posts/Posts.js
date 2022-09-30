@@ -7,37 +7,30 @@ import PostSkeleton from './Post/PostSkeleton';
 
 export default function Posts({ setCurrentId }) {
   const classes = useStyles();
-  const { postsData, isLoading, fetchPostsFailed } = useSelector(
-    ({ posts }) => posts,
-  );
+  const { postsData, isLoading, isFetchingBySearch, fetchPostsFailed } =
+    useSelector(({ posts }) => posts);
 
   const previewArr = [1, 2, 3, 4, 5, 6, 7, 8];
 
   return (
     <Grid container alignItems='stretch' spacing={3}>
-      {isLoading ? (
+      {isLoading || isFetchingBySearch ? (
         previewArr.map((n, i) => <PostSkeleton key={i} />)
       ) : fetchPostsFailed ? (
         <Paper className={classes.paper} xs={12} sm={12} md={12}>
-          <Typography
-            variant='h6'
-            style={{ textAlign: 'center', padding: 20 }}
-          >
+          <Typography variant='h6' style={{ textAlign: 'center', padding: 20 }}>
             Unable to load posts. Please ensure you have a stable internet
             connection and try again.
           </Typography>
         </Paper>
       ) : !postsData.length ? (
-        <Paper className={classes.paper} xs={12} sm={12} md={12}>
-          <Typography
-            style={{ fontFamily: 'Roboto', textAlign: 'center' }}
-            variant='body1'
-            component='p'
-          >
-            No Posts to display at the moment. When you or other people create a
-            post it will appear here.
-          </Typography>
-        </Paper>
+        <Typography
+          style={{ fontFamily: 'Roboto', padding: 20 }}
+          variant='h5'
+          component='h5'
+        >
+          No moments to display
+        </Typography>
       ) : (
         postsData.map((post) => (
           <Grid key={post._id} item xs={12} sm={12} md={6} lg={6} xl={3}>

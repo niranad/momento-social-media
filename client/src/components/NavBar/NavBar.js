@@ -9,11 +9,11 @@ import useStyles from './styles.js';
 
 export default function NavBar() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem('momentoProfileObj')),
   );
-  const dispatch = useDispatch();
-  const history = useHistory();
   const location = useLocation();
 
   const logout = () => {
@@ -23,17 +23,19 @@ export default function NavBar() {
   };
 
   useEffect(() => {
-    const token = user?.token;
+    if (location.pathname !== '/posts/search') {
+      const token = user?.token;
 
-    if (token) {
-      const decodedToken = decode(token);
+      if (token) {
+        const decodedToken = decode(token);
 
-      if (decodedToken?.exp * 1000 < new Date().getTime()) {
-        logout();
+        if (decodedToken?.exp * 1000 < new Date().getTime()) {
+          logout();
+        }
       }
-    }
 
-    setUser(JSON.parse(localStorage.getItem('momentoProfileObj')));
+      setUser(JSON.parse(localStorage.getItem('momentoProfileObj')));
+    }
   }, [location]);
 
   if (!user) return null;

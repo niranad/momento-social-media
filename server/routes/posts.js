@@ -20,7 +20,6 @@ router.post('/', auth, createPost);
 router.post('/:id/commentPost', auth, commentPost);
 router.patch('/:id/editPost', updatePost);
 router.patch('/:id/likePost', auth, likePost);
-router.delete('/:id', auth, deletePost);
-
+router.delete('/:id/deletePost', auth, deletePost);
 
 export default router;
