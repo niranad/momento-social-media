@@ -31,7 +31,7 @@ export const comment = (value, id) =>
 export const deletePost = (id) => API.delete(`/posts/${id}/deletePost`);
 export const likePost = (id) => API.patch(`/posts/${id}/likePost`);
 
-// user requests
+// user requests 
 export const signIn = (formData) => API.post('/users/signin', formData);
 export const signUp = (formData) => API.post('/users/signup', formData);
 export const signInWithGoogle = (googleResponse) =>
