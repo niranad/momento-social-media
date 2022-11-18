@@ -146,7 +146,7 @@ export default function Auth() {
         ) : (
           ''
         )}
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <form className={classes.form} onSubmit={handleSubmit} data-testid='auth-form'>
           <Grid container spacing={2}>
             {isSignUp && (
               <>

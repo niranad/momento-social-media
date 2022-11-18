@@ -1,4 +1,5 @@
 import React from 'react';
+import env from 'react-dotenv';
 import { Container, Typography } from '@material-ui/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -22,7 +23,7 @@ export default function App() {
   };
 
   return (
-    <GoogleOAuthProvider clientId='458553717636-8ihfjink5i2grviek0ujf8edc6qn3cn8.apps.googleusercontent.com'>
+    <GoogleOAuthProvider clientId={env.GOOGLE_CLIENT_ID}>
       <BrowserRouter>
         <Container maxWidth='xl'>
           <NavBar />
