@@ -18,7 +18,7 @@ router.get('/', auth, getPosts);
 router.get('/:id', auth, getPost);
 router.post('/', auth, createPost);
 router.post('/:id/commentPost', auth, commentPost);
-router.patch('/:id/editPost', updatePost);
+router.patch('/:id/editPost', auth, updatePost);
 router.patch('/:id/likePost', auth, likePost);
 router.delete('/:id/deletePost', auth, deletePost);
 

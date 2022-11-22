@@ -1,0 +1,12 @@
+{
+  "diff": true,
+  "extension": ["js"],
+  "timeout": 0,
+  "ui": "bdd",
+  "slow": "5000",
+  "exit": true,
+  "retries": 1,
+  "check-leaks": true,
+  "bail": false,
+  "color": true
+}

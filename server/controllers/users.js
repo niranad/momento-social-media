@@ -5,12 +5,11 @@ import fs from 'fs';
 import path from 'path';
 import User from '../models/userData.js';
 import asyncWrapper from '../middleware/async.js';
-import dotenv from 'dotenv';
+import customEnv from 'custom-env';
 
-dotenv.config();
+customEnv.env(true);
 
-const { MAIL_TRAP_HOST, MAIL_TRAP_PASS, MAIL_TRAP_PORT, MAIL_TRAP_USER } =
-  process.env;
+const { MAIL_TRAP_HOST, MAIL_TRAP_PORT, MAIL_TRAP_USER, MAIL_TRAP_PASS } = process.env;
 
 export const signIn = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;

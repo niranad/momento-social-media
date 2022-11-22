@@ -39,6 +39,11 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "react-dotenv": "<rootDir>/__mocks__/react-dotenv.js"
+    }
+  },
   "react-dotenv": {
     "whitelist": [
       "GOOGLE_CLIENT_ID"
@@ -57,4 +62,7 @@
     ]
   }
 }
+
+
+
 

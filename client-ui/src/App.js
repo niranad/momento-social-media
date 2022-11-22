@@ -1,6 +1,6 @@
 import React from 'react';
 import env from 'react-dotenv';
-import { Container, Typography } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import PostDetails from './components/postDetails/PostDetails';
@@ -25,7 +25,7 @@ export default function App() {
   return (
     <GoogleOAuthProvider clientId={env.GOOGLE_CLIENT_ID}>
       <BrowserRouter>
-        <Container maxWidth='xl'>
+        <Container maxWidth='xl' data-testid='app-container'>
           <NavBar />
           <Switch>
             <Route
