@@ -3,9 +3,8 @@ import server from '../index.js';
 import { dbOptions } from '../index.js';
 import path from 'path';
 import fs from 'fs';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import jwt from 'jsonwebtoken';
-import chai from 'chai';
 import PostMessage from '../models/postMessage.js';
 import mongoose from 'mongoose';
 import customEnv from 'custom-env';
@@ -71,8 +70,9 @@ describe('/posts', () => {
       done();
     });
   });
-  after(() => {
+  after(async () => {
     requester.close();
+    await mongoose.connection.close();
   });
 
   /**
@@ -515,12 +515,10 @@ describe('/posts', () => {
               expect(res).to.have.status(200);
               expect(res.body).to.be.an('object');
               expect(res.body).to.have.property('message');
-              expect(res.body.message).to.be.a('string');
-              expect(res.body.message).to.equal('Update the previous message.');
+              expect(res.body.message).to.have.string('Update the previous message.');
               expect(res.body).to.have.property('_id');
               expect(res.body).to.have.property('creator');
-              expect(res.body.creator).to.be.a('string');
-              expect(res.body.creator).to.equal(String(user1.id));
+              expect(res.body.creator).to.have.string(String(user1.id));
               done();
             });
         },
@@ -556,8 +554,7 @@ describe('/posts', () => {
             expect(res).to.have.status(401);
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('message');
-            expect(res.body.message).to.be.a('string');
-            expect(res.body.message).to.equal('Authentication Required');
+            expect(res.body.message).to.have.string('Authentication Required');
             done();
           });
         },
@@ -585,8 +582,7 @@ describe('/posts', () => {
               expect(res).to.have.status(403);
               expect(res.body).to.be.an('object');
               expect(res.body).to.have.property('message');
-              expect(res.body.message).to.be.a('string');
-              expect(res.body.message).to.equal('Illegal Operation');
+              expect(res.body.message).to.have.string('Illegal Operation');
               done();
             });
         },

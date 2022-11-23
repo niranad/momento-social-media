@@ -9,7 +9,13 @@ import customEnv from 'custom-env';
 
 customEnv.env(true);
 
-const { MAIL_TRAP_HOST, MAIL_TRAP_PORT, MAIL_TRAP_USER, MAIL_TRAP_PASS } = process.env;
+const {
+  MAIL_TRAP_HOST,
+  MAIL_TRAP_PORT,
+  MAIL_TRAP_USER,
+  MAIL_TRAP_PASS,
+  JWT_SECRET,
+} = process.env;
 
 export const signIn = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
@@ -56,31 +62,28 @@ export const signInWithGoogle = asyncWrapper(async (req, res) => {
     });
   }
 
-  const token = jwt.sign(
-    { email: user.email, id: user._id },
-    'test',
-    { expiresIn: '3h' },
-  );
+  const token = jwt.sign({ email: user.email, id: user._id }, 'test', {
+    expiresIn: '3h',
+  });
 
   res.status(200).json({ result: user, token, imageUrl: picture });
 });
 
 export const signUp = asyncWrapper(async (req, res) => {
   const { email, password, confirmPassword, firstName, lastName } = req.body;
-
-  const existingUser = await User.findOne({ email });
-
-  if (existingUser) {
-    return res.status(404).json({ message: 'User already exists' });
+  if (!email || !password || !confirmPassword || !firstName || !lastName) {
+    return res.status(400).send({ message: 'Missing some required field(s)' });
   }
-
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email already exists' });
+  }
   if (password !== confirmPassword) {
     return res.status(400).json({ message: "Passwords don't match" });
   }
-
   const token = jwt.sign(
     { name: `${firstName} ${lastName}`, email, password },
-    'test',
+    JWT_SECRET,
     { expiresIn: '24h' },
   );
 
@@ -113,37 +116,34 @@ export const signUp = asyncWrapper(async (req, res) => {
     html: emailConfirmationMesg,
   };
 
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(info);
-    }
-  });
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    return res.status(503).json({
+      message:
+        'Email verification service is currently unavailable. Please try again in a minute.',
+    });
+  }
 
-  return res.status(200).json({ message: 'Email confirmation message sent' });
+  return res.status(200).json({ message: 'Email verification link sent' });
 });
 
 export const confirmUser = asyncWrapper(async (req, res) => {
   const { signature } = req.query;
-
   let decodedToken = {};
 
   try {
-    decodedToken = jwt.verify(signature, 'test');
-    if (decodedToken?.exp * 1000 < new Date().getTime()) {
-      res.status(412).json({ message: 'Sign-up link has expired' });
-    }
+    decodedToken = jwt.verify(signature, JWT_SECRET);
   } catch (error) {
     console.log(error);
-    res.status(417).json({ message: 'Invalid sign-up credentials' });
+    res.status(422).json({ message: 'Credentials link has expired' });
   }
 
   const { name, email, password } = decodedToken;
   const user = await User.findOne({ email });
 
   if (user) {
-    return res.status(400).json({ message: 'Invalid request' });
+    return res.status(422).json({ message: 'Invalid request' });
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
@@ -154,11 +154,22 @@ export const confirmUser = asyncWrapper(async (req, res) => {
     name,
   });
 
-  const confirmationPage = fs
-    .readFileSync(path.join(process.cwd(), '/confirmation_page.html'), 'utf-8')
-    .replace(/[\n\r]/g, '');
+  const confirmPage = fs.createReadStream(
+    path.join(process.cwd(), '/confirmation_page.html'),
+    'utf-8',
+  );
 
-  res.writeHead('200', { 'Content-Type': 'text/html' });
-  res.write(confirmationPage);
-  return res.end();
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  return await new Promise((resolve, reject) => {
+    confirmPage
+      .pipe(res)
+      .on('unpipe', () => {
+        resolve(res.end());
+      })
+      .on('error', (err) => {
+        reject(
+          res.json({ message: 'Your email has been confirmed successfully.' }),
+        );
+      });
+  });
 });

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import env from 'react-dotenv';
 import { AppBar, Toolbar, Typography, Button, Avatar } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { LOGOUT } from '../../constants/actiontypes';
-import decode from 'jwt-decode';
+import jwt from 'jsonwebtoken';
 import useStyles from './styles.js';
 
 export default function NavBar() {
@@ -27,7 +28,7 @@ export default function NavBar() {
       const token = user?.token;
 
       if (token) {
-        const decodedToken = decode(token);
+        const decodedToken = jwt.verify(token, env.JWT_SECRET);
 
         if (decodedToken?.exp * 1000 < new Date().getTime()) {
           logout();
