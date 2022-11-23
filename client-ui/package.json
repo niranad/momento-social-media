@@ -11,7 +11,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "jsonwebtoken": "^8.5.1",
     "material-ui-chip-input": "^1.1.0",
     "moment": "^2.27.0",
