@@ -28,7 +28,7 @@ export const signIn = asyncWrapper(async (req, res) => {
   const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
   if (!isPasswordValid)
-    return res.status(400).json({ message: 'Invalid credentials' });
+    return res.status(422).json({ message: 'Invalid credentials' });
 
   const token = jwt.sign(
     { email: existingUser.email, id: existingUser._id },

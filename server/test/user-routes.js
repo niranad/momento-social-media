@@ -1,6 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import app from '../index.js';
 import User from '../models/userData.js';
@@ -55,9 +56,7 @@ describe('users', () => {
           expect(err).to.be.null;
           expect(res).to.have.status(400);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.be.a('string');
-          expect(res.body.message).to.equal('Missing some required field(s)');
+          expect(res.body).to.include({message: 'Missing some required field(s)'});
           done();
         });
     });
@@ -70,9 +69,7 @@ describe('users', () => {
           expect(err).to.be.null;
           expect(res).to.have.status(400);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.be.a('string');
-          expect(res.body.message).to.equal("Passwords don't match");
+          expect(res.body).to.include({ message: "Passwords don't match" });
           done();
         });
     });
@@ -84,11 +81,11 @@ describe('users', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
+          expect(res).to.be.json;
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.have.string(
-            'Email verification link sent',
-          );
+          expect(res.body).to.include({
+            message: 'Email verification link sent',
+          });
           done();
         });
     });
@@ -115,12 +112,14 @@ describe('users', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(422);
+          expect(res).to.be.json;
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('message');
-          expect(res.body.message).to.have.string('Credentials link has expired');
+          expect(res.body).to.include({
+            message: 'Credentials link has expired',
+          });
           done();
         });
-    })
+    });
 
     it('confirms a new user with the valid credentials in their email link', (done) => {
       const signature = jwt.sign(
@@ -139,9 +138,7 @@ describe('users', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
-          expect(res).to.have.property('headers');
-          expect(res.headers).to.be.an('object');
-          expect(res.headers['content-type']).to.have.string('text/html');
+          expect(res).to.be.html;
           done();
         });
     });
@@ -150,7 +147,76 @@ describe('users', () => {
   /**
    * Test user signin
    */
-  // describe('POST users/signin', () => {
-  //   it('ensures ');
-  // });
+  describe('POST users/signin', () => {
+    it('fails to sign in a non-existing user', (done) => {
+      requester
+        .post('/users/signin')
+        .send({ email: fakeUser.email, password: fakeUser.password })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(404);
+          expect(res).to.be.json;
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.include({ message: 'User does not exist' });
+          done();
+        });
+    });
+
+    it('fails to sign in user with invalid password', (done) => {
+      User.create(
+        {
+          name: `${fakeUser.firstName} ${fakeUser.lastName}`,
+          password: bcrypt.hashSync(fakeUser.password, 12),
+          email: fakeUser.email,
+        },
+        (err, doc) => {
+          if (err) return done(err);
+          expect(doc).to.have.property('_id');
+
+          requester
+            .post('/users/signin')
+            .send({ email: fakeUser.email, password: fakeUser.password + 'invalid' })
+            .end((err, res) => {
+              expect(err).to.be.null;
+              expect(res).to.have.status(422);
+              expect(res).to.be.json;
+              expect(res.body).to.be.an('object');
+              expect(res.body).to.include({ message: 'Invalid credentials'})
+              done();
+            });
+        },
+      );
+    });
+
+    it('signs in user with the valid credentials', (done) => {
+      User.create(
+        {
+          name: `${fakeUser.firstName} ${fakeUser.lastName}`,
+          password: bcrypt.hashSync(fakeUser.password, 12),
+          email: fakeUser.email,
+        },
+        (err, doc) => {
+          if (err) return done(err);
+          expect(doc).to.have.property('_id');
+
+          requester
+            .post('/users/signin')
+            .send({ email: fakeUser.email, password: fakeUser.password })
+            .end((err, res) => {
+              expect(err).to.be.null;
+              expect(res).to.have.status(200);
+              expect(res).to.be.json;
+              expect(res.body).to.be.an('object');
+              expect(res.body).to.have.property('result');
+              expect(res.body.result).to.be.an('object');
+              expect(res.body.result).to.have.property('name');
+              expect(res.body.result).to.have.property('email');
+              expect(res.body).to.have.property('token');
+              expect(res.body.token).to.be.a('string');
+              done();
+            });
+        },
+      );
+    });
+  });
 });

@@ -92,7 +92,6 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(500);
-          expect(res.body).to.be.an('object');
           done();
         });
     });
@@ -110,7 +109,6 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(500);
-          expect(res.body).to.be.an('object');
           done();
         });
     });
@@ -128,7 +126,6 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(500);
-          expect(res.body).to.be.an('object');
           done();
         });
     });
@@ -140,6 +137,8 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(401);
+          expect(res).to.have.property('headers');
+          expect(res).to.be.json;
           expect(res.body).to.have.property('message');
           expect(res.body.message).to.equal('Authentication Required');
           done();
@@ -154,6 +153,8 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
+          expect(res).to.have.property('headers');
+          expect(res).to.be.json;
           expect(res.body).to.be.an('object');
           expect(res.body).to.have.property('title');
           expect(res.body.title).to.be.a('string');
@@ -192,6 +193,8 @@ describe('/posts', () => {
         requester.get(`/posts/${doc._id}`).end((err, res) => {
           expect(err).to.be.null;
           expect(res.status).to.equal(401);
+          expect(res).to.have.property('headers');
+          expect(res).to.be.json;
           expect(res.body).to.have.property('message');
           expect(res.body.message).to.equal('Authentication Required');
           done();
@@ -209,6 +212,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res.status).to.equal(200);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('title');
             expect(res.body.title).to.be.a('string');
@@ -234,6 +239,8 @@ describe('/posts', () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(404);
+          expect(res).to.have.property('headers');
+          expect(res).to.be.json;
           expect(res.body).to.be.an('object');
           expect(res.body).to.have.property('message');
           expect(res.body.message).to.equal('NOT FOUND');
@@ -252,6 +259,8 @@ describe('/posts', () => {
         requester.get('/posts').end((err, res) => {
           expect(err).to.be.null;
           expect(res.status).to.equal(401);
+          expect(res).to.have.property('headers');
+          expect(res).to.be.json;
           expect(res.body).to.have.property('message');
           expect(res.body.message).to.equal('Authentication Required');
           done();
@@ -267,6 +276,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res.status).to.equal(200);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('data');
             expect(res.body.data).to.be.an('array');
@@ -294,6 +305,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(401);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.have.property('message');
             expect(res.body.message).to.equal('Authentication Required');
             done();
@@ -311,6 +324,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(200);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('data');
             expect(res.body.data).to.be.an('array');
@@ -345,6 +360,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(401);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.have.property('message');
             expect(res.body.message).to.equal('Authentication Required');
             done();
@@ -367,6 +384,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(200);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('comments');
             expect(res.body.comments).to.be.an('array');
@@ -392,6 +411,8 @@ describe('/posts', () => {
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(401);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.have.property('message');
             expect(res.body.message).to.equal('Authentication Required');
             done();
@@ -407,13 +428,12 @@ describe('/posts', () => {
         expect(doc.likes).to.have.length(0);
         requester
           .patch(`/posts/${doc._id}/likePost`)
-          .send({
-            value: 'This is a beautiful comment comming from your tester.',
-          })
           .set('Authorization', `Bearer ${testUserToken}`)
           .end((err, res) => {
             expect(err).to.be.null;
             expect(res).to.have.status(200);
+            expect(res).to.have.property('headers');
+            expect(res).to.be.json;
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('likes');
             expect(res.body.likes).to.be.an('array');
@@ -453,6 +473,8 @@ describe('/posts', () => {
             .end((err, res) => {
               expect(err).to.be.null;
               expect(res).to.have.status(401);
+              expect(res).to.have.property('headers');
+              expect(res).to.be.json;
               expect(res.body).to.be.an('object');
               expect(res.body).to.have.property('message');
               expect(res.body.message).to.be.a('string');
@@ -483,6 +505,8 @@ describe('/posts', () => {
             .end((err, res) => {
               expect(err).to.be.null;
               expect(res).to.have.status(403);
+              expect(res).to.have.property('headers');
+              expect(res).to.be.json;
               expect(res.body).to.be.an('object');
               expect(res.body).to.have.property('message');
               expect(res.body.message).to.be.a('string');
@@ -513,6 +537,8 @@ describe('/posts', () => {
             .end((err, res) => {
               expect(err).to.be.null;
               expect(res).to.have.status(200);
+              expect(res).to.have.property('headers');
+              expect(res).to.be.json;
               expect(res.body).to.be.an('object');
               expect(res.body).to.have.property('message');
               expect(res.body.message).to.have.string('Update the previous message.');
