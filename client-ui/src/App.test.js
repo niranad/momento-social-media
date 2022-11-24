@@ -5,25 +5,18 @@ import reducer from './reducers/index';
 import thunk from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 
-let store;
+const store = createStore(reducer, compose(applyMiddleware(thunk)));
 
 beforeEach(() => {
-  store = createStore(reducer, compose(applyMiddleware(thunk)));
   render(<Provider store={store}><App /></Provider>)
 })
-afterEach(() => {
-  store = null;
-  cleanup();
-});
+afterEach(cleanup);
 
-it('renders app container', () => {
-  const appContainer = screen.getByTestId('app-container');
-  expect(appContainer).toBeInTheDocument();
+it('renders app without crashing', () => {
+  screen.getByTestId('app-container');
 });
 
 it('renders authentication page initially', () => {
-  const authForm = screen.getByTestId('auth-form');
-  expect(authForm).toBeInTheDocument();
+  screen.getByTestId('auth-form');
 })
-
 

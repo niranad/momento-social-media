@@ -6,6 +6,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 export default function Input({ id,
   label,
+  testid,
   name,
   handleChange,
   type,
@@ -18,6 +19,7 @@ export default function Input({ id,
     <Grid item xs={12} sm={half ? 6 : 12}>
       <TextField
         id={id}
+        data-testid={testid}
         name={name}
         label={label}
         autoFocus={autoFocus}

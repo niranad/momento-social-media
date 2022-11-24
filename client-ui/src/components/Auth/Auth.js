@@ -41,7 +41,10 @@ export default function Auth() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openAlert, setOpenAlert] = useState(true);
-
+  
+  /**
+   * Run only once when component mounts
+   */
   useEffect(() => {
     localStorage.removeItem('momento_sign_up_action');
   }, []);
@@ -101,7 +104,7 @@ export default function Auth() {
         <Typography
           className={classes.logotext}
           variant='h3'
-          component='subtitle1'
+          component='h3'
         >
           Momento
         </Typography>
@@ -178,6 +181,7 @@ export default function Auth() {
             />
             <Input
               id='password'
+              testid='mui-password-field'
               name='password'
               label='Password'
               handleChange={handleChange}
@@ -187,6 +191,7 @@ export default function Auth() {
             {isSignUp && (
               <Input
                 id='confirmPassword'
+                testid='mui-confirmpassword-field'
                 name='confirmPassword'
                 label='Confirm Password'
                 handleChange={handleChange}
