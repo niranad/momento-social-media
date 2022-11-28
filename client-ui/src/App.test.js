@@ -13,10 +13,10 @@ beforeEach(() => {
 afterEach(cleanup);
 
 it('renders app without crashing', () => {
-  screen.getByTestId('app-container');
+  expect(screen.getByTestId('app-container')).toBeInTheDocument();
 });
 
 it('renders authentication page initially', () => {
-  screen.getByTestId('auth-form');
+  expect(screen.getByTestId('auth-form')).toBeInTheDocument();
 })
 

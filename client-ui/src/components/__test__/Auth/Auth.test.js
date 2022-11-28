@@ -1,4 +1,5 @@
-import { render, fireEvent, screen, waitFor, cleanup } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Auth from '../../Auth/Auth.js';
 import env from 'react-dotenv';
 import { Provider } from 'react-redux';
@@ -19,28 +20,25 @@ beforeEach(() =>
   ),
 );
 
-afterEach(cleanup);
 
 it('renders authentication form correctly', () => {
-  screen.getByTestId('auth-form');
-  screen.getByRole('button', { name: 'Sign In' });
-  screen.getByRole('button', { name: "Don't have an account? Sign up" });
+  expect(screen.getByTestId('auth-form')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Sign In' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: "Don't have an account? Sign up" })).toBeInTheDocument();
+  expect(screen.getByTestId('mui-password-field')).toBeInTheDocument();
+
   const textFields = screen.queryAllByRole('textbox');
   // only email field has textbox role
   expect(textFields).toHaveLength(1);
-  screen.getByTestId('mui-password-field');
 });
 
-it('changes to sign up form when user click sign up button', async () => {
-  fireEvent.click(
+it('renders sign up form when user click sign up button', async () => {
+  userEvent.click(
     screen.getByRole('button', { name: "Don't have an account? Sign up" }),
   );
-  
-  await waitFor(() => {
-    // only firstName, lastName and email fields will have textbox role
-    expect(screen.queryAllByRole('textbox')).toHaveLength(3);
-    expect(
-      screen.queryByTestId('mui-confirmpassword-field'),
-    ).toBeInTheDocument();
-  });
+
+  expect(await screen.findAllByRole('textbox')).toHaveLength(3);
+  expect(
+    screen.getByTestId('mui-confirmpassword-field'),
+  ).toBeInTheDocument();
 });

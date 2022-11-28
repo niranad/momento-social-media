@@ -1,7 +1,5 @@
-import { render, fireEvent, screen, cleanup } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import Input from '../../Auth/Input';
-
-afterEach(cleanup)
 
 it('renders input component correctly', () => {
   render(<Input type='text' autoFocus={true}/>);
